@@ -4,25 +4,22 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-const validationSchema = Yup.object({
-  name: Yup.string().required("Name is required"),
-  surname: Yup.string().required("Surname is required"),
-  birthday: Yup.date().required("Birthday is required"),
+const purchaseValidationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
 });
 
-const AddCustomerForm = () => {
+const PurchaseForm = () => {
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null); // 'success' or 'error'
 
-  const handleSubmit = async (
+  const handlePurchase = async (
     values,
     { setSubmitting, setErrors, resetForm },
   ) => {
     try {
-      const response = await fetch("/api/customers/add", {
+      const response = await fetch("/api/customers/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -32,23 +29,23 @@ const AddCustomerForm = () => {
         const data = await response.json();
         setMessage(
           data.reward
-            ? `Customer added successfully. Reward: ${data.reward}`
-            : "Customer added successfully",
+            ? "Reward granted: " + data.reward
+            : "Purchase recorded successfully",
         );
         setMessageType("success");
-        resetForm();
       } else {
         const errorData = await response.json();
-        setErrors({ submit: errorData.message || "Failed to add customer" });
-        setMessage(errorData.message || "Failed to add customer");
+        setErrors({ submit: errorData.message || "Customer not found" });
+        setMessage(errorData.message || "Customer not found");
         setMessageType("error");
       }
     } catch (error) {
-      setErrors({ submit: "Failed to add customer" });
-      setMessage("Failed to add customer");
+      setErrors({ submit: "Failed to record purchase" });
+      setMessage("Failed to record purchase");
       setMessageType("error");
     } finally {
       setSubmitting(false);
+      resetForm();
     }
   };
 
@@ -58,33 +55,25 @@ const AddCustomerForm = () => {
   };
 
   const fields = [
-    { name: "name", type: "text", placeholder: "John", label: "Name" },
-    { name: "surname", type: "text", placeholder: "Doe", label: "Surname" },
-    {
-      name: "birthday",
-      type: "date",
-      placeholder: "1990-01-01",
-      label: "Birthday",
-    },
     {
       name: "email",
       type: "email",
       placeholder: "john.doe@example.com",
-      label: "Email",
+      label: "Customer Email",
     },
   ];
 
   return (
     <div className="max-w-md mx-auto my-10 p-8 bg-white shadow-lg rounded-lg transform transition-all duration-500 ease-in-out hover:shadow-2xl">
       <Formik
-        initialValues={{ name: "", surname: "", birthday: "", email: "" }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
+        initialValues={{ email: "" }}
+        validationSchema={purchaseValidationSchema}
+        onSubmit={handlePurchase}
       >
         {({ isSubmitting, errors }) => (
           <Form className="space-y-6">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 animate-fadeIn">
-              Add Customer
+              Record Purchase
             </h2>
             {fields.map((field) => (
               <div key={field.name} className="relative mb-6">
@@ -117,7 +106,7 @@ const AddCustomerForm = () => {
                 className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transform transition-all duration-300 ease-in-out"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Submitting..." : "Add Customer"}
+                {isSubmitting ? "Submitting..." : "Record Purchase"}
               </button>
             </div>
             {message && (
@@ -134,4 +123,4 @@ const AddCustomerForm = () => {
   );
 };
 
-export default AddCustomerForm;
+export default PurchaseForm;

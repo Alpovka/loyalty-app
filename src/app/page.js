@@ -1,10 +1,15 @@
 import React from 'react'
 import AddCustomerForm from './components/AddCustomerForm'
 import PurchaseForm from './components/PurchaseForm'
+import Head from 'next/head'
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 to-blue-300 p-8">
+      <Head>
+        <title>Loyalty Program</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <header className="text-center mb-10">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
           Smoothie Shop Loyalty Program

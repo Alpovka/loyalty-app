@@ -1,4 +1,4 @@
-import { openDB } from './database.js'
+import { openDB } from './functions.js/index.js'
 
 async function setupDB() {
   const db = await openDB()

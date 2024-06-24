@@ -1,4 +1,5 @@
-import { addCustomer } from '../../../database.js'
+// pages/api/customers/add.js
+import { addCustomer } from '../../../functions'
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {

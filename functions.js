@@ -1,30 +1,23 @@
-import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
-
-async function openDB() {
-  return open({
-    filename: './loyalty.db',
-    driver: sqlite3.Database
-  })
-}
+// database.js
+import { query } from './db'
 
 async function addCustomer(name, surname, birthday, email) {
-  const db = await openDB()
   try {
-    const existingCustomer = await db.get(
-      'SELECT * FROM customers WHERE email = ?',
+    const existingCustomerResult = await query(
+      'SELECT * FROM customers WHERE email = $1',
       [email]
     )
+    const existingCustomer = existingCustomerResult.rows[0]
     if (existingCustomer) {
       throw new Error('A customer with this email already exists.')
     }
 
-    await db.run(
-      'INSERT INTO customers (name, surname, birthday, email, purchases) VALUES (?, ?, ?, ?, ?)',
+    await query(
+      'INSERT INTO customers (name, surname, birthday, email, purchases) VALUES ($1, $2, $3, $4, $5)',
       [name, surname, birthday, email, 1]
     )
-    await db.run(
-      'INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)',
+    await query(
+      'INSERT INTO transactions (email, timestamp, type) VALUES ($1, $2, $3)',
       [email, new Date().toISOString(), 'purchase']
     )
 
@@ -36,8 +29,8 @@ async function addCustomer(name, surname, birthday, email) {
 
     if (todayMonthDay === customerBirthdayMonthDay) {
       reward = 'Free Birthday Smoothie'
-      await db.run(
-        'INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)',
+      await query(
+        'INSERT INTO transactions (email, timestamp, type) VALUES ($1, $2, $3)',
         [email, new Date().toISOString(), 'free birthday smoothie']
       )
     }
@@ -46,27 +39,28 @@ async function addCustomer(name, surname, birthday, email) {
   } catch (error) {
     console.error('Failed to add customer:', error)
     throw error
-  } finally {
-    await db.close()
   }
 }
 
 async function recordPurchase(email) {
-  const db = await openDB()
   try {
-    const customer = await db.get('SELECT * FROM customers WHERE email = ?', [
-      email
-    ])
+    const customerResult = await query(
+      'SELECT * FROM customers WHERE email = $1',
+      [email]
+    )
+    const customer = customerResult.rows[0]
+
     if (customer) {
       const today = new Date()
       const todayMonthDay = `${today.getMonth() + 1}-${today.getDate()}`
       const customerBirthday = new Date(customer.birthday)
       const customerBirthdayMonthDay = `${customerBirthday.getMonth() + 1}-${customerBirthday.getDate()}`
 
-      const transactionsToday = await db.all(
-        'SELECT * FROM transactions WHERE email = ? AND DATE(timestamp) = DATE(?)',
+      const transactionsTodayResult = await query(
+        'SELECT * FROM transactions WHERE email = $1 AND DATE(timestamp) = DATE($2)',
         [email, today.toISOString()]
       )
+      const transactionsToday = transactionsTodayResult.rows
       const freeSmoothieToday = transactionsToday.some(
         (transaction) => transaction.type === 'free birthday smoothie'
       )
@@ -76,25 +70,25 @@ async function recordPurchase(email) {
 
       if (purchases % 8 === 0) {
         reward = 'Free Smoothie'
-        await db.run(
-          'INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)',
+        await query(
+          'INSERT INTO transactions (email, timestamp, type) VALUES ($1, $2, $3)',
           [email, new Date().toISOString(), 'free smoothie']
         )
       }
       if (todayMonthDay === customerBirthdayMonthDay && !freeSmoothieToday) {
         reward = 'Free Birthday Smoothie'
-        await db.run(
-          'INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)',
+        await query(
+          'INSERT INTO transactions (email, timestamp, type) VALUES ($1, $2, $3)',
           [email, new Date().toISOString(), 'free birthday smoothie']
         )
       }
 
-      await db.run('UPDATE customers SET purchases = ? WHERE email = ?', [
+      await query('UPDATE customers SET purchases = $1 WHERE email = $2', [
         purchases,
         email
       ])
-      await db.run(
-        'INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)',
+      await query(
+        'INSERT INTO transactions (email, timestamp, type) VALUES ($1, $2, $3)',
         [email, new Date().toISOString(), 'purchase']
       )
 
@@ -105,9 +99,7 @@ async function recordPurchase(email) {
   } catch (error) {
     console.error('Failed to record purchase:', error)
     throw error
-  } finally {
-    await db.close()
   }
 }
 
-export { openDB, addCustomer, recordPurchase }
+export { addCustomer, recordPurchase }

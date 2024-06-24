@@ -1,4 +1,5 @@
-import { recordPurchase } from '../../../database.js'
+// pages/api/customers/purchase.js
+import { recordPurchase } from '../../../functions'
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {

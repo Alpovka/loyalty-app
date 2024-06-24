@@ -1,4 +1,4 @@
-import { openDB } from './database.js';
+import { openDB } from "./database.js";
 
 async function setupDB() {
   const db = await openDB();
@@ -19,9 +19,9 @@ async function setupDB() {
                 type TEXT
             );
         `);
-    console.log('Database setup complete');
+    console.log("Database setup complete");
   } catch (error) {
-    console.error('Failed to set up database:', error);
+    console.error("Failed to set up database:", error);
     throw error;
   } finally {
     await db.close();

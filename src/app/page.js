@@ -15,7 +15,7 @@ export default function Home() {
           Smoothie Shop Loyalty Program
         </h1>
         <p className="text-gray-600">
-          Enjoy free smoothie on your birthday and 8th purchase!
+          Enjoy free smoothie on birthday and 8th purchase!
         </p>
       </header>
       <main className="container mx-auto">

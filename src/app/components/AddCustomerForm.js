@@ -24,7 +24,8 @@ const AddCustomerForm = () => {
             });
 
             if (response.ok) {
-                setMessage('Customer added successfully');
+                const data = await response.json();
+                setMessage(data.reward ? `Customer added successfully. Reward: ${data.reward}` : 'Customer added successfully');
                 setMessageType('success');
                 resetForm();
             } else {

@@ -1,77 +1,77 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import React, { useState } from 'react'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
 
 const purchaseValidationSchema = Yup.object({
     email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-});
+        .email('Invalid email address')
+        .required('Email is required')
+})
 
 const PurchaseForm = () => {
-    const [message, setMessage] = useState(null);
-    const [messageType, setMessageType] = useState(null); // 'success' or 'error'
+    const [message, setMessage] = useState(null)
+    const [messageType, setMessageType] = useState(null) // 'success' or 'error'
 
     const handlePurchase = async (
         values,
-        { setSubmitting, setErrors, resetForm },
+        { setSubmitting, setErrors, resetForm }
     ) => {
         try {
-            const response = await fetch("/api/customers/purchase", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            });
+            const response = await fetch('/api/customers/purchase', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values)
+            })
 
             if (response.ok) {
-                const data = await response.json();
+                const data = await response.json()
                 setMessage(
                     data.reward
-                        ? "Reward granted: " + data.reward
-                        : "Purchase recorded successfully",
-                );
-                setMessageType("success");
+                        ? 'Reward granted: ' + data.reward
+                        : 'Purchase recorded successfully'
+                )
+                setMessageType('success')
             } else {
-                const errorData = await response.json();
-                setErrors({ submit: errorData.message || "Customer not found" });
-                setMessage(errorData.message || "Customer not found");
-                setMessageType("error");
+                const errorData = await response.json()
+                setErrors({ submit: errorData.message || 'Customer not found' })
+                setMessage(errorData.message || 'Customer not found')
+                setMessageType('error')
             }
         } catch (error) {
-            setErrors({ submit: "Failed to record purchase" });
-            setMessage("Failed to record purchase");
-            setMessageType("error");
+            setErrors({ submit: 'Failed to record purchase' })
+            setMessage('Failed to record purchase')
+            setMessageType('error')
         } finally {
-            setSubmitting(false);
-            resetForm();
+            setSubmitting(false)
+            resetForm()
         }
-    };
+    }
 
     const handleFocus = () => {
-        setMessage(null);
-        setMessageType(null);
-    };
+        setMessage(null)
+        setMessageType(null)
+    }
 
     const fields = [
         {
-            name: "email",
-            type: "email",
-            placeholder: "john.doe@example.com",
-            label: "Customer Email",
-        },
-    ];
+            name: 'email',
+            type: 'email',
+            placeholder: 'john.doe@example.com',
+            label: 'Customer Email'
+        }
+    ]
 
     return (
         <div className="bg-white py-6 px-8 rounded-lg shadow-lg">
             <Formik
-                initialValues={{ email: "" }}
+                initialValues={{ email: '' }}
                 validationSchema={purchaseValidationSchema}
                 onSubmit={handlePurchase}
             >
                 {({ isSubmitting, errors }) => (
-                    <Form className="space-y-6">
+                    <Form className="space-y-8">
                         <h2 className="text-2xl font-bold mb-6 text-gray-800 animate-fadeIn">
                             Record Purchase
                         </h2>
@@ -93,7 +93,7 @@ const PurchaseForm = () => {
                                 <ErrorMessage
                                     name={field.name}
                                     component="div"
-                                    className="text-red-500 text-sm mt-2 absolute animate-slideIn"
+                                    className="text-red-500 text-sm mt-1 absolute animate-slideIn"
                                 />
                             </div>
                         ))}
@@ -106,12 +106,12 @@ const PurchaseForm = () => {
                                 className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transform transition-all duration-300 ease-in-out"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? "Submitting..." : "Record Purchase"}
+                                {isSubmitting ? 'Submitting...' : 'Record Purchase'}
                             </button>
                         </div>
                         {message && (
                             <div
-                                className={`mt-4 ${messageType === "success" ? "text-green-500" : "text-red-500"} text-sm animate-fadeIn`}
+                                className={`mt-4 ${messageType === 'success' ? 'text-green-500' : 'text-red-500'} text-sm animate-fadeIn`}
                             >
                                 {message}
                             </div>
@@ -120,7 +120,7 @@ const PurchaseForm = () => {
                 )}
             </Formik>
         </div>
-    );
-};
+    )
+}
 
-export default PurchaseForm;
+export default PurchaseForm

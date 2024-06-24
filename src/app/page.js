@@ -1,6 +1,6 @@
-import React from "react";
-import AddCustomerForm from "./components/AddCustomerForm";
-import PurchaseForm from "./components/PurchaseForm";
+import React from 'react'
+import AddCustomerForm from './components/AddCustomerForm'
+import PurchaseForm from './components/PurchaseForm'
 
 export default function Home() {
   return (
@@ -20,5 +20,5 @@ export default function Home() {
         </div>
       </main>
     </div>
-  );
+  )
 }

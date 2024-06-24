@@ -1,7 +1,7 @@
-import { openDB } from "./database.js";
+import { openDB } from './database.js'
 
 async function setupDB() {
-  const db = await openDB();
+  const db = await openDB()
   try {
     await db.exec(`
             CREATE TABLE IF NOT EXISTS customers (
@@ -18,16 +18,16 @@ async function setupDB() {
                 timestamp TEXT,
                 type TEXT
             );
-        `);
-    console.log("Database setup complete");
+        `)
+    console.log('Database setup complete')
   } catch (error) {
-    console.error("Failed to set up database:", error);
-    throw error;
+    console.error('Failed to set up database:', error)
+    throw error
   } finally {
-    await db.close();
+    await db.close()
   }
 }
 
-(async () => {
-  await setupDB();
-})();
+;(async () => {
+  await setupDB()
+})()

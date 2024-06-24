@@ -1,88 +1,88 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import React, { useState } from 'react'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("Name is required"),
-  surname: Yup.string().required("Surname is required"),
-  birthday: Yup.date().required("Birthday is required"),
+  name: Yup.string().required('Name is required'),
+  surname: Yup.string().required('Surname is required'),
+  birthday: Yup.date().required('Birthday is required'),
   email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-});
+    .email('Invalid email address')
+    .required('Email is required')
+})
 
 const AddCustomerForm = () => {
-  const [message, setMessage] = useState(null);
-  const [messageType, setMessageType] = useState(null); // 'success' or 'error'
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null) // 'success' or 'error'
 
   const handleSubmit = async (
     values,
-    { setSubmitting, setErrors, resetForm },
+    { setSubmitting, setErrors, resetForm }
   ) => {
     try {
-      const response = await fetch("/api/customers/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const response = await fetch('/api/customers/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      })
 
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json()
         setMessage(
           data.reward
             ? `Customer added successfully. Reward: ${data.reward}`
-            : "Customer added successfully",
-        );
-        setMessageType("success");
-        resetForm();
+            : 'Customer added successfully'
+        )
+        setMessageType('success')
+        resetForm()
       } else {
-        const errorData = await response.json();
-        setErrors({ submit: errorData.message || "Failed to add customer" });
-        setMessage(errorData.message || "Failed to add customer");
-        setMessageType("error");
+        const errorData = await response.json()
+        setErrors({ submit: errorData.message || 'Failed to add customer' })
+        setMessage(errorData.message || 'Failed to add customer')
+        setMessageType('error')
       }
     } catch (error) {
-      setErrors({ submit: "Failed to add customer" });
-      setMessage("Failed to add customer");
-      setMessageType("error");
+      setErrors({ submit: 'Failed to add customer' })
+      setMessage('Failed to add customer')
+      setMessageType('error')
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   const handleFocus = () => {
-    setMessage(null);
-    setMessageType(null);
-  };
+    setMessage(null)
+    setMessageType(null)
+  }
 
   const fields = [
-    { name: "name", type: "text", placeholder: "John", label: "Name" },
-    { name: "surname", type: "text", placeholder: "Doe", label: "Surname" },
+    { name: 'name', type: 'text', placeholder: 'John', label: 'Name' },
+    { name: 'surname', type: 'text', placeholder: 'Doe', label: 'Surname' },
     {
-      name: "birthday",
-      type: "date",
-      placeholder: "1990-01-01",
-      label: "Birthday",
+      name: 'birthday',
+      type: 'date',
+      placeholder: '1990-01-01',
+      label: 'Birthday'
     },
     {
-      name: "email",
-      type: "email",
-      placeholder: "john.doe@example.com",
-      label: "Email",
-    },
-  ];
+      name: 'email',
+      type: 'email',
+      placeholder: 'john.doe@example.com',
+      label: 'Email'
+    }
+  ]
 
   return (
     <div className="bg-white py-6 px-8 rounded-lg shadow-lg">
       <Formik
-        initialValues={{ name: "", surname: "", birthday: "", email: "" }}
+        initialValues={{ name: '', surname: '', birthday: '', email: '' }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting, errors }) => (
-          <Form className="space-y-6">
+          <Form className="space-y-8">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 animate-fadeIn">
               Add Customer
             </h2>
@@ -104,7 +104,7 @@ const AddCustomerForm = () => {
                 <ErrorMessage
                   name={field.name}
                   component="div"
-                  className="text-red-500 text-sm mt-2 absolute animate-slideIn"
+                  className="text-red-500 text-sm mt-1 absolute animate-slideIn"
                 />
               </div>
             ))}
@@ -114,12 +114,12 @@ const AddCustomerForm = () => {
                 className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transform transition-all duration-300 ease-in-out"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Submitting..." : "Add Customer"}
+                {isSubmitting ? 'Submitting...' : 'Add Customer'}
               </button>
             </div>
             {message && (
               <div
-                className={`mt-4 ${messageType === "success" ? "text-green-500" : "text-red-500"} text-sm animate-fadeIn`}
+                className={`mt-4 ${messageType === 'success' ? 'text-green-500' : 'text-red-500'} text-sm animate-fadeIn`}
               >
                 {message}
               </div>
@@ -128,7 +128,7 @@ const AddCustomerForm = () => {
         )}
       </Formik>
     </div>
-  );
-};
+  )
+}
 
-export default AddCustomerForm;
+export default AddCustomerForm

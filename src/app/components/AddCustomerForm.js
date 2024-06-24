@@ -81,7 +81,7 @@ const AddCustomerForm = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting, errors }) => (
+        {({ isSubmitting }) => (
           <Form className="space-y-8">
             <h2 className="text-2xl font-bold mb-6 text-gray-800 animate-fadeIn">
               Add Customer

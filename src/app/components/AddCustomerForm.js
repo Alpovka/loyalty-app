@@ -48,78 +48,49 @@ const AddCustomerForm = () => {
         setMessageType(null);
     };
 
+    const fields = [
+        { name: 'name', type: 'text', placeholder: 'John', label: 'Name' },
+        { name: 'surname', type: 'text', placeholder: 'Doe', label: 'Surname' },
+        { name: 'birthday', type: 'date', placeholder: '1990-01-01', label: 'Birthday' },
+        { name: 'email', type: 'email', placeholder: 'john.doe@example.com', label: 'Email' }
+    ];
+
     return (
-        <div>
+        <div className="max-w-md mx-auto my-10 p-8 bg-white shadow-lg rounded-lg transform transition-all duration-500 ease-in-out hover:shadow-2xl">
             <Formik
                 initialValues={{ name: '', surname: '', birthday: '', email: '' }}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
             >
                 {({ isSubmitting, errors }) => (
-                    <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                        <h2 className="text-gray-700 text-lg font-bold mb-4">Add Customer</h2>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                                Name
-                            </label>
-                            <Field
-                                name="name"
-                                type="text"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                onFocus={handleFocus}
-                            />
-                            <ErrorMessage name="name" component="div" className="text-red-500 text-xs mt-2" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="surname">
-                                Surname
-                            </label>
-                            <Field
-                                name="surname"
-                                type="text"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                onFocus={handleFocus}
-                            />
-                            <ErrorMessage name="surname" component="div" className="text-red-500 text-xs mt-2" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="birthday">
-                                Birthday
-                            </label>
-                            <Field
-                                name="birthday"
-                                type="date"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                onFocus={handleFocus}
-                            />
-                            <ErrorMessage name="birthday" component="div" className="text-red-500 text-xs mt-2" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                                Email
-                            </label>
-                            <Field
-                                name="email"
-                                type="email"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                onFocus={handleFocus}
-                            />
-                            <ErrorMessage name="email" component="div" className="text-red-500 text-xs mt-2" />
-                        </div>
+                    <Form className="space-y-8">
+                        <h2 className="text-2xl font-bold mb-6 text-gray-800 animate-fadeIn">Add Customer</h2>
+                        {fields.map((field) => (
+                            <div key={field.name} className="relative mb-6">
+                                <label className="block text-gray-700 mb-2" htmlFor={field.name}>
+                                    {field.label}
+                                </label>
+                                <Field
+                                    name={field.name}
+                                    type={field.type}
+                                    placeholder={field.placeholder}
+                                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 ease-in-out"
+                                    onFocus={handleFocus}
+                                />
+                                <ErrorMessage name={field.name} component="div" className="text-red-500 text-sm mt-1 absolute animate-slideIn" />
+                            </div>
+                        ))}
                         <div className="flex items-center justify-between">
                             <button
                                 type="submit"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transform transition-all duration-300 ease-in-out"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Add Customer'}
                             </button>
                         </div>
                         {message && (
-                            <div
-                                className={`${messageType === 'success' ? 'text-green-500' : 'text-red-500'
-                                    } text-xs mt-4`}
-                            >
+                            <div className={`mt-4 ${messageType === 'success' ? 'text-green-500' : 'text-red-500'} text-sm animate-fadeIn`}>
                                 {message}
                             </div>
                         )}

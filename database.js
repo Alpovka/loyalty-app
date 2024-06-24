@@ -16,6 +16,9 @@ async function addCustomer(name, surname, birthday, email) {
             throw new Error('A customer with this email already exists.');
         }
 
+        await db.run('INSERT INTO customers (name, surname, birthday, email, purchases) VALUES (?, ?, ?, ?, ?)', [name, surname, birthday, email, 1]);
+        await db.run('INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)', [email, new Date().toISOString(), 'purchase']);
+
         let reward = null;
         const today = new Date();
         const todayMonthDay = `${today.getMonth() + 1}-${today.getDate()}`;
@@ -24,9 +27,8 @@ async function addCustomer(name, surname, birthday, email) {
 
         if (todayMonthDay === customerBirthdayMonthDay) {
             reward = 'Free Birthday Smoothie';
+            await db.run('INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)', [email, new Date().toISOString(), 'free birthday smoothie']);
         }
-
-        await db.run('INSERT INTO customers (name, surname, birthday, email, purchases) VALUES (?, ?, ?, ?, ?)', [name, surname, birthday, email, 1]);
 
         return { reward };
     } catch (error) {
@@ -42,17 +44,28 @@ async function recordPurchase(email) {
     try {
         const customer = await db.get('SELECT * FROM customers WHERE email = ?', [email]);
         if (customer) {
-            const purchases = customer.purchases + 1;
-            await db.run('UPDATE customers SET purchases = ? WHERE email = ?', [purchases, email]);
-
-            let reward = null;
             const today = new Date();
             const todayMonthDay = `${today.getMonth() + 1}-${today.getDate()}`;
             const customerBirthday = new Date(customer.birthday);
             const customerBirthdayMonthDay = `${customerBirthday.getMonth() + 1}-${customerBirthday.getDate()}`;
 
-            if (purchases % 8 === 0) reward = 'Free Smoothie';
-            if (todayMonthDay === customerBirthdayMonthDay) reward = 'Free Birthday Smoothie';
+            const transactionsToday = await db.all('SELECT * FROM transactions WHERE email = ? AND DATE(timestamp) = DATE(?)', [email, today.toISOString()]);
+            const freeSmoothieToday = transactionsToday.some(transaction => transaction.type === 'free birthday smoothie');
+
+            let reward = null;
+            let purchases = customer.purchases + 1;
+
+            if (purchases % 8 === 0) {
+                reward = 'Free Smoothie';
+                await db.run('INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)', [email, new Date().toISOString(), 'free smoothie']);
+            }
+            if (todayMonthDay === customerBirthdayMonthDay && !freeSmoothieToday) {
+                reward = 'Free Birthday Smoothie';
+                await db.run('INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)', [email, new Date().toISOString(), 'free birthday smoothie']);
+            }
+
+            await db.run('UPDATE customers SET purchases = ? WHERE email = ?', [purchases, email]);
+            await db.run('INSERT INTO transactions (email, timestamp, type) VALUES (?, ?, ?)', [email, new Date().toISOString(), 'purchase']);
 
             return { purchases, reward };
         } else {

@@ -45,50 +45,53 @@ const PurchaseForm = () => {
         setMessageType(null);
     };
 
+    const fields = [
+        { name: 'email', type: 'email', placeholder: 'john.doe@example.com', label: 'Customer Email' }
+    ];
+
     return (
-        <div>
+        <div className="max-w-md mx-auto my-10 p-8 bg-white shadow-lg rounded-lg transform transition-all duration-500 ease-in-out hover:shadow-2xl">
             <Formik
                 initialValues={{ email: '' }}
                 validationSchema={purchaseValidationSchema}
                 onSubmit={handlePurchase}
             >
                 {({ isSubmitting, errors }) => (
-                    <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                        <h2 className="text-gray-700 text-lg font-bold mb-4">Record Purchase</h2>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                                Customer Email
-                            </label>
-                            <Field
-                                name="email"
-                                type="email"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                onFocus={handleFocus}
-                            />
-                            <ErrorMessage name="email" component="div" className="text-red-500 text-xs mt-2" />
-                        </div>
-                        {errors.submit && <div className="text-red-500 text-xs mb-4">{errors.submit}</div>}
+                    <Form className="space-y-8">
+                        <h2 className="text-2xl font-bold mb-6 text-gray-800 animate-fadeIn">Record Purchase</h2>
+                        {fields.map((field) => (
+                            <div key={field.name} className="relative mb-6">
+                                <label className="block text-gray-700 mb-2" htmlFor={field.name}>
+                                    {field.label}
+                                </label>
+                                <Field
+                                    name={field.name}
+                                    type={field.type}
+                                    placeholder={field.placeholder}
+                                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 ease-in-out"
+                                    onFocus={handleFocus}
+                                />
+                                <ErrorMessage name={field.name} component="div" className="text-red-500 text-sm mt-1 absolute animate-slideIn" />
+                            </div>
+                        ))}
+                        {errors.submit && <div className="text-red-500 text-sm mb-4">{errors.submit}</div>}
                         <div className="flex items-center justify-between">
                             <button
                                 type="submit"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transform transition-all duration-300 ease-in-out"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Record Purchase'}
                             </button>
                         </div>
+                        {message && (
+                            <div className={`mt-4 ${messageType === 'success' ? 'text-green-500' : 'text-red-500'} text-sm animate-fadeIn`}>
+                                {message}
+                            </div>
+                        )}
                     </Form>
                 )}
             </Formik>
-
-            {message && (
-                <div
-                    className={`${messageType === 'success' ? 'text-green-500' : 'text-red-500'
-                        } text-xs mt-4`}
-                >
-                    {message}
-                </div>
-            )}
         </div>
     );
 };

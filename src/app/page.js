@@ -10,15 +10,9 @@ export default function Home() {
         <p className="text-gray-600">Enjoy free smoothie on your birthday and 8th purchase!</p>
       </header>
       <main className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Add Customer</h2>
-            <AddCustomerForm />
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Record Purchase</h2>
-            <PurchaseForm />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+          <AddCustomerForm />
+          <PurchaseForm />
         </div>
       </main>
     </div>

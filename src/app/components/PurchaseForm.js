@@ -50,7 +50,7 @@ const PurchaseForm = () => {
     ];
 
     return (
-        <div className="max-w-md mx-auto my-10 p-8 bg-white shadow-lg rounded-lg transform transition-all duration-500 ease-in-out hover:shadow-2xl">
+        <div className="bg-white py-6 px-8 rounded-lg shadow-lg">
             <Formik
                 initialValues={{ email: '' }}
                 validationSchema={purchaseValidationSchema}
